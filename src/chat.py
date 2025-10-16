@@ -18,6 +18,8 @@ except ImportError:  # pragma: no cover - optional feature
 
 LOGGER = logging.getLogger("chat")
 DEFAULT_OUT_OF_CONTEXT = "Não tenho informações necessárias para responder sua pergunta."
+OPENAI_DEFAULT_CHAT_MODEL = "gpt-5-nano"
+GOOGLE_DEFAULT_CHAT_MODEL = "gemini-2.5-flash-lite"
 
 
 def configure_logging(verbose: bool = False) -> None:
@@ -77,7 +79,7 @@ def resolve_llm(
             if not api_key:
                 errors[provider] = "OPENAI_API_KEY ausente"
                 continue
-            model = model_override or os.getenv("OPENAI_CHAT_MODEL", "gpt-5-nano")
+            model = model_override or OPENAI_DEFAULT_CHAT_MODEL
             client = ChatOpenAI(model=model, api_key=api_key, temperature=0)
             return ChatBackend(provider="openai", model=model, client=client)
 
@@ -89,7 +91,7 @@ def resolve_llm(
             if ChatGoogleGenerativeAI is None:
                 errors[provider] = "pacote langchain-google-genai não instalado"
                 continue
-            model = model_override or os.getenv("GOOGLE_CHAT_MODEL", "gemini-2.5-flash-lite")
+            model = model_override or GOOGLE_DEFAULT_CHAT_MODEL
             client = ChatGoogleGenerativeAI(model=model, google_api_key=api_key, temperature=0)
             return ChatBackend(provider="google", model=model, client=client)
 

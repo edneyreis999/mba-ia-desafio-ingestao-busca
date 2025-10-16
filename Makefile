@@ -10,5 +10,5 @@ chat:
 	@$(PYTHON) src/chat.py $(ARGS)
 
 clear-db:
-	@docker compose exec postgres psql -U postgres -d rag -c "DELETE FROM langchain_pg_collection WHERE name = '$${PGVECTOR_COLLECTION:-documents}';" >/dev/null || true
-	@echo "Coleção '$${PGVECTOR_COLLECTION:-documents}' removida (ou já inexistente). Execute a ingestão novamente para recriar."
+	@docker compose exec postgres psql -U postgres -d rag -c "DELETE FROM langchain_pg_collection WHERE name = '$${PG_VECTOR_COLLECTION_NAME:-documents}';" >/dev/null || true
+	@echo "Coleção '$${PG_VECTOR_COLLECTION_NAME:-documents}' removida (ou já inexistente). Execute a ingestão novamente para recriar."

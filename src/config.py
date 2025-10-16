@@ -1,7 +1,6 @@
 import logging
 import os
 import socket
-from typing import Iterable
 from urllib.parse import urlsplit, urlunsplit
 
 from dotenv import load_dotenv
@@ -19,15 +18,12 @@ load_dotenv()
 LOGGER = logging.getLogger("config")
 
 
-def get_env_value(name: str, *alternatives: str, required: bool = True) -> str:
-    candidates: Iterable[str] = (name, *alternatives)
-    for key in candidates:
-        value = os.getenv(key)
-        if value:
-            return value
+def get_env_value(name: str, required: bool = True) -> str:
+    value = os.getenv(name)
+    if value:
+        return value
     if required:
-        options = ", ".join(candidates)
-        raise RuntimeError(f"Missing required environment variable. Expected one of: {options}")
+        raise RuntimeError(f"Missing required environment variable: {name}")
     return ""
 
 
@@ -59,37 +55,23 @@ def resolve_embeddings(explicit_backend: str | None = None) -> tuple[str, Embedd
             )
         api_key = get_env_value("GOOGLE_API_KEY")
         model = os.getenv("GOOGLE_EMBEDDING_MODEL", "models/embedding-001")
-        transport = os.getenv("GOOGLE_EMBEDDING_TRANSPORT")
-        kwargs = {"model": model, "google_api_key": api_key}
-        if transport:
-            kwargs["transport"] = transport
-        return backend, GoogleGenerativeAIEmbeddings(**kwargs)
+        return backend, GoogleGenerativeAIEmbeddings(model=model, google_api_key=api_key)
 
-    size = int(os.getenv("FAKE_EMBEDDING_SIZE", "1536"))
+    size = 1536
     return backend, FakeEmbeddings(size=size)
 
 
 def resolve_pgvector_url() -> str:
-    connection = get_env_value("PGVECTOR_URL", "DATABASE_URL", "PG_VECTOR_URL")
+    connection = get_env_value("DATABASE_URL")
     parsed = urlsplit(connection)
     if parsed.hostname:
         try:
             socket.gethostbyname(parsed.hostname)
         except OSError as exc:
-            fallback = os.getenv("PGVECTOR_FALLBACK_HOST")
-            if fallback:
-                netloc = parsed.netloc.replace(parsed.hostname, fallback, 1)
-                parsed = parsed._replace(netloc=netloc)
-                LOGGER.warning(
-                    "Hostname %s could not be resolved (%s); using fallback %s",
-                    parsed.hostname,
-                    exc,
-                    fallback,
-                )
-            else:
-                raise
+            LOGGER.warning("Hostname %s could not be resolved (%s)", parsed.hostname, exc)
+            raise
     return urlunsplit(parsed)
 
 
 def resolve_collection_name() -> str:
-    return get_env_value("PGVECTOR_COLLECTION", "PG_VECTOR_COLLECTION_NAME")
+    return get_env_value("PG_VECTOR_COLLECTION_NAME")

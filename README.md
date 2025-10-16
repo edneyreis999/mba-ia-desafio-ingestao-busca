@@ -32,16 +32,14 @@ Antes de iniciar, instale o Python (foi utilizado Python 3.14.0 durante o desenv
 2. **Preencher os valores obrigatórios:**
 
    - **Conexão com o Postgres**
-     - `PGVECTOR_URL` ou `DATABASE_URL` – string de conexão com o banco (ex.: `postgresql+psycopg://postgres:postgres@localhost:5432/rag`).
-     - `PGVECTOR_COLLECTION` ou `PG_VECTOR_COLLECTION_NAME` – nome da coleção onde os vetores serão armazenados (padrão `documents`).
+     - `DATABASE_URL` – string de conexão com o banco (ex.: `postgresql+psycopg://postgres:postgres@localhost:5432/rag`).
+     - `PG_VECTOR_COLLECTION_NAME` – nome da coleção onde os vetores serão armazenados (padrão `documents`).
    - **Ingestão (embeddings)**
      - `EMBEDDINGS_PROVIDER` – `openai`, `google` ou `fake`. Caso não informado o script tentará detectar automaticamente.
      - `OPENAI_API_KEY` e `OPENAI_EMBEDDING_MODEL` – chave e modelo de embedding da OpenAI (padrão `text-embedding-3-small`).
      - `GOOGLE_API_KEY` e `GOOGLE_EMBEDDING_MODEL` – chave e modelo de embedding Gemini (padrão `models/embedding-001`).
    - **Chat (LLM)**
      - `LLM_PROVIDER` – `openai`, `google` ou `fake`, com fallback automático se a chave preferida estiver ausente.
-     - `OPENAI_CHAT_MODEL` – modelo conversacional OpenAI (padrão `gpt-5-nano`).
-     - `GOOGLE_CHAT_MODEL` – modelo conversacional Gemini (padrão `gemini-2.5-flash-lite`).
    - **Documento**
      - `PDF_PATH` – caminho absoluto ou relativo do PDF que será ingerido (padrão `./document.pdf`).
 
@@ -143,7 +141,7 @@ Se precisar reiniciar o banco vetorial, execute:
 make clear-db
 ```
 
-O alvo remove a coleção configurada em `PGVECTOR_COLLECTION` (ou `documents`, por padrão) usando o Postgres via Docker. Execute `make ingest` em seguida para recriar os registros.
+O alvo remove a coleção configurada em `PG_VECTOR_COLLECTION_NAME` (ou `documents`, por padrão) usando o Postgres via Docker. Execute `make ingest` em seguida para recriar os registros.
 
 ### Exemplos com providers OpenAI e Google
 
