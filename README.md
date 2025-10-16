@@ -145,6 +145,22 @@ make clear-db
 
 O alvo remove a coleção configurada em `PGVECTOR_COLLECTION` (ou `documents`, por padrão) usando o Postgres via Docker. Execute `make ingest` em seguida para recriar os registros.
 
+### Exemplos com providers OpenAI e Google
+
+Use as variáveis de ambiente para direcionar os comandos do `make` para o provedor desejado.
+
+```bash
+# Fluxo completo usando OpenAI
+make clear-db
+EMBEDDINGS_PROVIDER=openai make ingest
+make chat ARGS="--embedding-provider openai --llm-provider openai"
+
+# Fluxo completo usando Google
+make clear-db
+EMBEDDINGS_PROVIDER=google make ingest
+make chat ARGS="--embedding-provider google --llm-provider google"
+```
+
 ## Estrutura do Projeto
 
 ```
