@@ -107,7 +107,7 @@ def resolve_llm(
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="CLI para conversar com o assistente RAG.")
-    parser.add_argument("--k", type=int, default=5, help="Quantidade de chunks recuperados.")
+    parser.add_argument("--k", type=int, default=10, help="Quantidade de chunks recuperados.")
     parser.add_argument(
         "--embedding-provider",
         choices=["openai", "google", "fake"],
