@@ -92,7 +92,13 @@ def resolve_llm(
                 errors[provider] = "pacote langchain-google-genai não instalado"
                 continue
             model = model_override or GOOGLE_DEFAULT_CHAT_MODEL
-            client = ChatGoogleGenerativeAI(model=model, google_api_key=api_key, temperature=0)
+            transport = os.getenv("GOOGLE_GENAI_TRANSPORT", "rest")
+            client = ChatGoogleGenerativeAI(
+                model=model,
+                google_api_key=api_key,
+                temperature=0,
+                transport=transport,
+            )
             return ChatBackend(provider="google", model=model, client=client)
 
         if provider == "fake":

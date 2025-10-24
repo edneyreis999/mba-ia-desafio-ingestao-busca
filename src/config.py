@@ -55,7 +55,12 @@ def resolve_embeddings(explicit_backend: str | None = None) -> tuple[str, Embedd
             )
         api_key = get_env_value("GOOGLE_API_KEY")
         model = os.getenv("GOOGLE_EMBEDDING_MODEL", "models/embedding-001")
-        return backend, GoogleGenerativeAIEmbeddings(model=model, google_api_key=api_key)
+        transport = os.getenv("GOOGLE_GENAI_TRANSPORT", "rest")
+        return backend, GoogleGenerativeAIEmbeddings(
+            model=model,
+            google_api_key=api_key,
+            transport=transport,
+        )
 
     size = 1536
     return backend, FakeEmbeddings(size=size)
